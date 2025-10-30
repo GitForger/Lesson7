@@ -1,19 +1,12 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 class CalculatorPage:
     def __init__(self, driver):
         self.driver = driver
         self.delay_field = (By.CSS_SELECTOR, "#delay")
         self.result_field = (By.CSS_SELECTOR, ".screen")
-        
-        self.buttons = {
-            "7": (By.XPATH, "//span[contains(@class, 'btn') and text()='7']"),
-            "8": (By.XPATH, "//span[contains(@class, 'btn') and text()='8']"),
-            "+": (By.XPATH, "//span[contains(@class, 'btn') and text()='+']"),
-            "=": (By.XPATH, "//span[contains(@class, 'btn') and text()='=']"),
-        }
+        self.button_locator = "//span[contains(@class, 'btn') and text()='{}']"
     
     def open(self):
         self.driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
@@ -24,12 +17,9 @@ class CalculatorPage:
         delay_input.send_keys(str(delay_seconds))
     
     def click_button(self, button):
-        button_locator = self.buttons[button]
-        self.driver.find_element(*button_locator).click()
+        self.driver.find_element(By.XPATH, self.button_locator.format(button)).click()
     
     def wait_for_result(self, expected_result, timeout=50):
         WebDriverWait(self.driver, timeout).until(
             lambda driver: driver.find_element(*self.result_field).text == expected_result
         )
-        print(f"✅ Результат {expected_result} отобразился!")
-
